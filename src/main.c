@@ -16,36 +16,36 @@ void init(void) {
 }
 
 int main(void) {
-    uint8_t BTNstate = 1;
-    uint8_t lastBTNstate = 1;
-    uint8_t led_out = 1;
+    uint8_t akt_stav_tlac = 1;
+    uint8_t pred_stav_tlac = 1;
+    uint8_t vystup_led = 1;
 
     init();
 
     while (1) {
-        BTNstate = GPIO_ReadInputPin(BTN_PORT, BTN_PIN);
+        akt_stav_tlac = GPIO_ReadInputPin(BTN_PORT, BTN_PIN);
 
-
-        if (lastBTNstate == 0 && BTNstate == 1) {
-            led_out += 1;
+    // predchozi stav se nemuze rovnat aktualnimu. Tudiz aby nebyli stejne pricteme +1
+        if (pred_stav_tlac == 0 && akt_stav_tlac == 1) {
+            vystup_led += 1;
         }
 
-
-        if (led_out > 3) {
-            led_out = 1;
+    // zadání hranice stavů (3). Po překročení 3 stavu se bude rovnat(vrátí se) k 1 stavu 
+        if (vystup_led > 3) {
+            vystup_led = 1;
         }
 
-        // Nastavení výstupů pro LED
-        if (led_out == 1) {
+    // nastavování výstupů LEDek s piny 
+        if (vystup_led == 1) {
             GPIO_WriteHigh(GPIOB, GPIO_PIN_2);
             GPIO_WriteLow(GPIOB, GPIO_PIN_4);
-        } else if (led_out == 2) {
+        } else if (vystup_led == 2) {
             GPIO_WriteHigh(GPIOB, GPIO_PIN_3);
             GPIO_WriteLow(GPIOB, GPIO_PIN_2);
         } else {
             GPIO_WriteHigh(GPIOB, GPIO_PIN_4);
             GPIO_WriteLow(GPIOB, GPIO_PIN_3);
         }
-        lastBTNstate = BTNstate;
+        pred_stav_tlac = akt_stav_tlac;
     }
 }
